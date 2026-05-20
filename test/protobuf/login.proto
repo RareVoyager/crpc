@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package login;
+
+message LoginRequest {
+    string name = 1;
+    string pwd = 2;
+}
+
+message ResultCode{
+    int32 errcode = 1;
+    bytes msg = 2;
+}
+
+
+message LoginResponse{
+    ResultCode code = 1;
+    bool success = 2;
+}
+
+message User {
+    bytes name = 1;
+    uint32 age = 2;
+    enum Sex{
+        Man = 0;
+        Woman = 1;
+    }
+    Sex sex = 3;
+}
+
+message GetFriendListResponse{
+    ResultCode result = 1;
+    repeated User user_list = 2;
+}
+
+
+
