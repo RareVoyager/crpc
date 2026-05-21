@@ -1,4 +1,4 @@
-target_include_directories(${PROJECT_SOURCE_DIR}/example)
+include(${CMAKE_SOURCE_DIR}/cmake/utils.cmake)
 
-add_subdirectory(callee)
-add_subdirectory(caller)
+
+crpc_example(userservice callee/userservice.cc user.pb.cc)

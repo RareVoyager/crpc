@@ -3,7 +3,7 @@
 // source: test/protobuf/login.proto
 // Protobuf C++ Version: 6.33.5
 
-#include "login.pb.h"
+#include "test/protobuf/login.pb.h"
 
 #include <algorithm>
 #include <type_traits>

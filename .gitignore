@@ -69,3 +69,5 @@ Testing/
 .cache/
 .vscode/
 CMakeUserPresets.json
+*.pb.cc
+*.pb.h
