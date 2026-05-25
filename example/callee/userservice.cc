@@ -1,5 +1,7 @@
 #include "user.pb.h"
 
+#include <include/crpcapplication.h>
+
 class UserService : fixbug::UserServiceRpc
 {
 public:
@@ -29,8 +31,9 @@ public:
 };
 
 
-int main()
+int main(int argc, char** argv)
 {
+	crpc::CrpcApplication::Init(argc, argv);
 
 	return 0;
 }
