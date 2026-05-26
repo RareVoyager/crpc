@@ -22,19 +22,26 @@ namespace crpc
 	private:
 		void OnConnection(const muduo::net::TcpConnectionPtr&);
 
+		// 手动处理了粘包问题
 		void OnMessage(const muduo::net::TcpConnectionPtr&,
 					   muduo::net::Buffer*,
 					   muduo::Timestamp);
+		// Closure 回调操作
+		void SendRpcResponse(const muduo::net::TcpConnectionPtr&, google::protobuf::Message*);
 
 	private:
 		muduo::net::EventLoop loop_;
 
+		/**
+		 * 包括服务节点以及他的方法map
+		 */
 		struct ServiceInfo
 		{
-			std::string service_name;
+			google::protobuf::Service* service_;
 			std::unordered_map<std::string, const google::protobuf::MethodDescriptor*> methodMap_;
 		};
 
+		// key: 服务名 value 服务信息哈希表
 		std::unordered_map<std::string, ServiceInfo>
 				serviceInfoMap_;
 	};
