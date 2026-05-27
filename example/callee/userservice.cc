@@ -1,8 +1,10 @@
 #include "user.pb.h"
 
 #include <include/crpcapplication.h>
+#include <include/crpcchannel.h>
+#include <include/crpcprovider.h>
 
-class UserService : fixbug::UserServiceRpc
+class UserService : public fixbug::UserServiceRpc
 {
 public:
 	bool Login(const std::string& name, const std::string& pwd)
@@ -34,6 +36,9 @@ public:
 int main(int argc, char** argv)
 {
 	crpc::CrpcApplication::Init(argc, argv);
+	crpc::CrpcProvider provider;
+	provider.NotifyService(new UserService());
+	provider.Run();
 
 	return 0;
 }

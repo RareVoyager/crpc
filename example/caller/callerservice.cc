@@ -2,6 +2,7 @@
 
 #include <include/crpcapplication.h>
 #include <include/crpcchannel.h>
+#include <include/crpccontroller.h>
 
 #include "user.pb.h"
 
@@ -17,16 +18,26 @@ int main(int argc, char** argv)
 	request.set_pwd("123");
 
 	fixbug::LoginResponse response;
-	stub.Login(nullptr, &request, &response, nullptr);
 
-	if (0 == response.result().errcode())
+	crpc::CrpcController controller;
+	stub.Login(&controller, &request, &response, nullptr);
+
+	if (controller.Failed())
 	{
-		std::cout << "login success: " << response.success() << std::endl;
+		std::cout << controller.ErrorText() << std::endl;
 	}
 	else
 	{
-		std::cout << "login errno: " << response.result().errmsg() << std::endl;
+		if (0 == response.result().errcode())
+		{
+			std::cout << "login success: " << response.success() << std::endl;
+		}
+		else
+		{
+			std::cout << "login errno: " << response.result().errmsg() << std::endl;
+		}
 	}
-    
+
+
 	return 0;
 }

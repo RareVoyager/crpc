@@ -42,7 +42,6 @@ namespace crpc
 				break;
 			}
 
-			// todo: 读取配置
 			config_.LoadConfigFile(config_file.c_str());
 
 			std::cout << "rpcserverip:" << config_.Load("rpcserverip") << std::endl;

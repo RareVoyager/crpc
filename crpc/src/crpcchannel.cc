@@ -25,6 +25,7 @@ namespace crpc
 								 google::protobuf::Message* response,
 								 google::protobuf::Closure* done)
 	{
+		controller->Reset();
 		const google::protobuf::ServiceDescriptor* sd = method->service();
 		std::string service_name = std::string(sd->name());
 		std::string method_name = std::string(method->name());
@@ -36,7 +37,9 @@ namespace crpc
 		}
 		else
 		{
-			std::cout << "serialize request error! " << __FILE__ << ":" << __LINE__ << std::endl;
+			char buf[512] = {0};
+			sprintf(buf, "serialize request error! %s:%s", __FILE__, __LINE__);
+			controller->SetFailed(buf);
 			return;
 		}
 
@@ -54,11 +57,14 @@ namespace crpc
 		}
 		else
 		{
-			std::cout << "serialize rpc header error! " << __FILE__ << ":" << __LINE__ << std::endl;
+			char buf[512] = {0};
+			sprintf(buf, "serialize rpc header error! %s:%s", __FILE__, __LINE__);
+			controller->SetFailed(buf);
+			return;
 		}
 
 		std::string send_str;
-		send_str.insert(0, (std::string((char*)&header_size, 0)));
+		send_str.insert(0, (std::string((char*)&header_size, 4)));
 		send_str += rcp_header_str;
 		send_str += args_str;
 
@@ -66,8 +72,10 @@ namespace crpc
 		int clientfd = socket(AF_INET, SOCK_STREAM, 0);
 		if (-1 == clientfd)
 		{
-			std::cout << "create socket fd errno" << errno << std::endl;
-			exit(EXIT_FAILURE);
+			char buf[512] = {0};
+			sprintf(buf, "create socket fd errno:%u %s:%s", errno, __FILE__, __LINE__);
+			controller->SetFailed(buf);
+			return;
 		}
 
 		std::string ip = crpc::CrpcApplication::GetConfig().Load("rpcserverip");
@@ -80,14 +88,19 @@ namespace crpc
 
 		if (-1 == connect(clientfd, (sockaddr*)&server, sizeof(server)))
 		{
-			std::cout << "connect errno" << errno << std::endl;
 			::close(clientfd);
-			exit(EXIT_FAILURE);
+			char buf[512] = {0};
+			sprintf(buf, "connect errno:%u %s:%s", errno, __FILE__, __LINE__);
+			controller->SetFailed(buf);
+			return;
 		}
 
 		if (-1 == send(clientfd, send_str.c_str(), send_str.size(), 0))
 		{
-			std::cout << "send errno" << errno << std::endl;
+			char buf[512] = {0};
+			sprintf(buf, "send errno:%u %s:%s", errno, __FILE__, __LINE__);
+			controller->SetFailed(buf);
+			return;
 		}
 
 		// 接受rpc请求的响应值
@@ -95,8 +108,10 @@ namespace crpc
 		int recv_size = 0;
 		if (-1 == (recv_size = recv(clientfd, buf, 1024, 0)))
 		{
-			std::cout << "recv errno" << errno << std::endl;
 			::close(clientfd);
+			char buf[512] = {0};
+			sprintf(buf, "recv errno:%u %s:%s", errno, __FILE__, __LINE__);
+			controller->SetFailed(buf);
 			return;
 		}
 
@@ -105,8 +120,10 @@ namespace crpc
 		// if (!response->ParseFromString(rpc_response_str))
 		if (!response->ParseFromArray(buf, recv_size))
 		{
-			std::cout << "prase errno" << buf << std::endl;
 			::close(clientfd);
+			char buf[512] = {0};
+			sprintf(buf, "prase errno:%u %s:%s", errno, __FILE__, __LINE__);
+			controller->SetFailed(buf);
 			return;
 		}
 		::close(clientfd);
