@@ -137,7 +137,7 @@ namespace crpc
 	void CrpcProvider::SendRpcResponse(const muduo::net::TcpConnectionPtr& conn, google::protobuf::Message* response)
 	{
 		std::string response_str;
-		if (response->ParseFromString(&response_str))
+		if (response->SerializeToString(&response_str))
 		{
 			conn->send(response_str);
 		}
