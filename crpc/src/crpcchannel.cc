@@ -38,7 +38,7 @@ namespace crpc
 		else
 		{
 			char buf[512] = {0};
-			sprintf(buf, "serialize request error! %s:%s", __FILE__, __LINE__);
+			sprintf(buf, "serialize request error! %s:%d", __FILE__, __LINE__);
 			controller->SetFailed(buf);
 			return;
 		}
@@ -58,7 +58,7 @@ namespace crpc
 		else
 		{
 			char buf[512] = {0};
-			sprintf(buf, "serialize rpc header error! %s:%s", __FILE__, __LINE__);
+			sprintf(buf, "serialize rpc header error! %s:%d", __FILE__, __LINE__);
 			controller->SetFailed(buf);
 			return;
 		}
@@ -73,7 +73,7 @@ namespace crpc
 		if (-1 == clientfd)
 		{
 			char buf[512] = {0};
-			sprintf(buf, "create socket fd errno:%u %s:%s", errno, __FILE__, __LINE__);
+			sprintf(buf, "create socket fd errno:%u %s:%d", errno, __FILE__, __LINE__);
 			controller->SetFailed(buf);
 			return;
 		}
@@ -90,7 +90,7 @@ namespace crpc
 		{
 			::close(clientfd);
 			char buf[512] = {0};
-			sprintf(buf, "connect errno:%u %s:%s", errno, __FILE__, __LINE__);
+			sprintf(buf, "connect errno:%u %s:%d", errno, __FILE__, __LINE__);
 			controller->SetFailed(buf);
 			return;
 		}
@@ -98,7 +98,7 @@ namespace crpc
 		if (-1 == send(clientfd, send_str.c_str(), send_str.size(), 0))
 		{
 			char buf[512] = {0};
-			sprintf(buf, "send errno:%u %s:%s", errno, __FILE__, __LINE__);
+			sprintf(buf, "send errno:%u %s:%d", errno, __FILE__, __LINE__);
 			controller->SetFailed(buf);
 			return;
 		}
@@ -110,7 +110,7 @@ namespace crpc
 		{
 			::close(clientfd);
 			char buf[512] = {0};
-			sprintf(buf, "recv errno:%u %s:%s", errno, __FILE__, __LINE__);
+			sprintf(buf, "recv errno:%u %s:%d", errno, __FILE__, __LINE__);
 			controller->SetFailed(buf);
 			return;
 		}
@@ -122,7 +122,7 @@ namespace crpc
 		{
 			::close(clientfd);
 			char buf[512] = {0};
-			sprintf(buf, "prase errno:%u %s:%s", errno, __FILE__, __LINE__);
+			sprintf(buf, "prase errno:%u %s:%d", errno, __FILE__, __LINE__);
 			controller->SetFailed(buf);
 			return;
 		}
