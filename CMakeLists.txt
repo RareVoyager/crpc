@@ -16,8 +16,26 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # 找到Thread protobuf zookeeper库
 find_package(Threads REQUIRED)
 find_package(protobuf CONFIG REQUIRED)
-find_package(zookeeper-client-c CONFIG REQUIRED)
 
+# 手动链接 zookeeper_mt
+find_path(ZOOKEEPER_INCLUDE_DIR
+    NAMES zookeeper/zookeeper.h
+    PATHS /usr/local/include
+    REQUIRED
+)
+
+find_library(ZOOKEEPER_MT_LIBRARY
+    NAMES zookeeper_mt
+    PATHS /usr/local/lib
+    REQUIRED
+)
+add_library(zookeeper::mt UNKNOWN IMPORTED GLOBAL)
+set_target_properties(zookeeper::mt PROPERTIES
+    IMPORTED_LOCATION "${ZOOKEEPER_MT_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${ZOOKEEPER_INCLUDE_DIR}"
+    INTERFACE_LINK_LIBRARIES "Threads::Threads;rt;m"
+)
+add_library(zookeeper_mt::zookeeper_mt ALIAS zookeeper::mt)
 
 # 手动链接三方库 muduo
 find_path(MUDUO_INCLUDE_DIR

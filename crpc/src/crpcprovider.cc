@@ -1,10 +1,11 @@
 #include <iostream>
+#include <muduo/net/TcpServer.h>
 
 
 #include <include/crpcapplication.h>
 #include <include/crpcprovider.h>
 #include <include/rpcheader.pb.h>
-#include <muduo/net/TcpServer.h>
+#include <include/zookeeperutil.h>
 namespace crpc
 {
 	void CrpcProvider::NotifyService(google::protobuf::Service* service)
@@ -47,6 +48,24 @@ namespace crpc
 										 muduo::Timestamp reciveTime) {
 			OnMessage(conn, buffer, reciveTime);
 		});
+
+		ZkClient client;
+		client.start();
+
+		for (auto& sp: serviceInfoMap_)
+		{
+			std::string service_path = "/" + sp.first;
+			client.create(service_path.c_str(), nullptr, 0);
+
+			for (auto& mp: sp.second.methodMap_)
+			{
+				std::string method_name = service_path + "/" + mp.first;
+				char method_path_data[128] = {0};
+				sprintf(method_path_data, "%s:%d", ip.c_str(), port);
+				client.create(method_name.c_str(), method_path_data, strlen(method_path_data), ZOO_EPHEMERAL);
+			}
+		}
+
 		server.start();
 		loop_.loop();
 	}

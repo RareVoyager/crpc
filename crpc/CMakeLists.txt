@@ -21,5 +21,5 @@ target_link_libraries(crpc
         muduo::base
         muduo::net
         protobuf::libprotobuf
-        zookeeper-client-c::zookeeper-client-c
+        zookeeper_mt::zookeeper_mt
 )

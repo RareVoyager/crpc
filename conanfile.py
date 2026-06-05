@@ -14,7 +14,6 @@ class CrpcRecipe(ConanFile):
 
     requires = (
         "protobuf/6.33.5",
-        "zookeeper-client-c/3.9.5",
     )
 
     def layout(self):

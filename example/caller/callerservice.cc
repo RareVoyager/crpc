@@ -3,12 +3,15 @@
 #include <include/crpcapplication.h>
 #include <include/crpcchannel.h>
 #include <include/crpccontroller.h>
+#include <include/logger.h>
 
 #include "user.pb.h"
 
 int main(int argc, char** argv)
 {
 
+	LOG_INFO("hello world");
+	LOG_ERROR("err INFO");
 	crpc::CrpcApplication::Init(argc, argv);
 
 	fixbug::UserServiceRpc_Stub stub(new crpc::CrpcChannel());
